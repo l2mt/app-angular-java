@@ -1,0 +1,20 @@
+# Repository-level ignores for the Angular + Java workspace.
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Root editor settings
+/.idea/
+/.vscode/
+
+# Root logs and env files
+*.log
+/.env
+/.env.*
+!/.env.example
+
+# Backend workspace outputs
+/backend/.gradle/
+/backend/build/
+/backend/bin/
