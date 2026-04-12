@@ -69,7 +69,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public void eliminarCliente(Long clienteId) {
         Cliente cliente = buscarClientePorId(clienteId);
-        if (cuentaRepository.existsByClientePersonaId(clienteId)) {
+        if (cuentaRepository.existsCuentasDeCliente(clienteId)) {
             throw new BusinessConflictException("No se puede eliminar el cliente porque tiene cuentas asociadas");
         }
         clienteRepository.delete(cliente);
@@ -87,7 +87,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private void validarIdentificacionDisponibleParaActualizacion(String identificacion, Long clienteId) {
-        if (clienteRepository.existsByIdentificacionAndPersonaIdNot(identificacion, clienteId)) {
+        if (clienteRepository.existsOtroClienteConIdentificacion(identificacion, clienteId)) {
             throw new ClienteIdentificacionDuplicadaException(identificacion);
         }
     }

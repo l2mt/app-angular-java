@@ -103,7 +103,7 @@ class ClienteServiceImplTest {
         cliente.setPersonaId(1L);
 
         when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
-        when(cuentaRepository.existsByClientePersonaId(1L)).thenReturn(true);
+        when(cuentaRepository.existsCuentasDeCliente(1L)).thenReturn(true);
 
         BusinessConflictException exception = assertThrows(
                 BusinessConflictException.class,

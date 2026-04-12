@@ -5,6 +5,7 @@ import com.lmora.cuentas.cuentas.exception.CuentaNumeroDuplicadoException;
 import com.lmora.cuentas.movimientos.exception.CupoDiarioExcedidoException;
 import com.lmora.cuentas.movimientos.exception.MovimientoInvalidoException;
 import com.lmora.cuentas.movimientos.exception.SaldoNoDisponibleException;
+import com.lmora.cuentas.reportes.exception.ReporteInvalidoException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -70,6 +71,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MovimientoInvalidoException.class)
     public ResponseEntity<ApiError> handleMovimientoInvalido(
             MovimientoInvalidoException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI(), null);
+    }
+
+    @ExceptionHandler(ReporteInvalidoException.class)
+    public ResponseEntity<ApiError> handleReporteInvalido(
+            ReporteInvalidoException exception,
             HttpServletRequest request
     ) {
         return buildError(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI(), null);

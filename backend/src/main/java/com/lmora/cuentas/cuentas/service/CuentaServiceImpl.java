@@ -79,7 +79,7 @@ public class CuentaServiceImpl implements CuentaService {
     @Transactional
     public void eliminarCuenta(Long cuentaId) {
         Cuenta cuenta = buscarCuentaPorId(cuentaId);
-        if (movimientoRepository.existsByCuentaCuentaId(cuentaId)) {
+        if (movimientoRepository.existsMovimientosDeCuenta(cuentaId)) {
             throw new BusinessConflictException("No se puede eliminar la cuenta porque tiene movimientos asociados");
         }
         cuentaRepository.delete(cuenta);
@@ -102,7 +102,7 @@ public class CuentaServiceImpl implements CuentaService {
     }
 
     private void validarNumeroCuentaDisponibleParaActualizacion(String numeroCuenta, Long cuentaId) {
-        if (cuentaRepository.existsByNumeroCuentaAndCuentaIdNot(numeroCuenta, cuentaId)) {
+        if (cuentaRepository.existsOtraCuentaConNumero(numeroCuenta, cuentaId)) {
             throw new CuentaNumeroDuplicadoException(numeroCuenta);
         }
     }
@@ -113,7 +113,7 @@ public class CuentaServiceImpl implements CuentaService {
         }
 
         if (cuentaExistente.getSaldoInicial().compareTo(nuevoSaldoInicial) != 0
-                && movimientoRepository.existsByCuentaCuentaId(cuentaExistente.getCuentaId())) {
+                && movimientoRepository.existsMovimientosDeCuenta(cuentaExistente.getCuentaId())) {
             throw new BusinessConflictException(
                     "No se puede modificar el saldo inicial de una cuenta con movimientos registrados"
             );

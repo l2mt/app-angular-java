@@ -108,7 +108,7 @@ class CuentaServiceImplTest {
         patch.setEstado(false);
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
-        when(movimientoRepository.existsByCuentaCuentaId(1L)).thenReturn(false);
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(false);
         when(cuentaRepository.save(any(Cuenta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Cuenta cuentaActualizada = cuentaService.actualizarParcialCuenta(1L, null, patch);
@@ -118,7 +118,7 @@ class CuentaServiceImplTest {
         assertEquals(TipoCuenta.CORRIENTE, cuentaActualizada.getTipoCuenta());
         assertEquals(new BigDecimal("3000.00"), cuentaActualizada.getSaldoInicial());
         assertEquals(false, cuentaActualizada.getEstado());
-        verify(cuentaRepository, never()).existsByNumeroCuentaAndCuentaIdNot(any(), any());
+        verify(cuentaRepository, never()).existsOtraCuentaConNumero(any(), any());
         verify(clienteRepository, never()).findById(any());
     }
 
@@ -133,7 +133,7 @@ class CuentaServiceImplTest {
         patch.setSaldoInicial(new BigDecimal("3000.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
-        when(movimientoRepository.existsByCuentaCuentaId(1L)).thenReturn(true);
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(true);
 
         BusinessConflictException exception = assertThrows(
                 BusinessConflictException.class,
@@ -153,7 +153,7 @@ class CuentaServiceImplTest {
         cuentaExistente.setCuentaId(1L);
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
-        when(movimientoRepository.existsByCuentaCuentaId(1L)).thenReturn(true);
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(true);
 
         BusinessConflictException exception = assertThrows(
                 BusinessConflictException.class,

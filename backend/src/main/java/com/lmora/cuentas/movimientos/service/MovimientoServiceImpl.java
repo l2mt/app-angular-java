@@ -53,7 +53,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         }
 
         List<Movimiento> movimientos = new ArrayList<>(movimientoRepository
-                .findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(cuentaId));
+                .findMovimientosDeCuenta(cuentaId));
         movimientos.add(movimiento);
 
         recalcularYValidarMovimientos(cuenta, movimientos);
@@ -72,7 +72,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         movimientoExistente.setValor(movimiento.getValor());
 
         List<Movimiento> movimientos = new ArrayList<>(movimientoRepository
-                .findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(movimientoExistente.getCuenta().getCuentaId()));
+                .findMovimientosDeCuenta(movimientoExistente.getCuenta().getCuentaId()));
 
         recalcularYValidarMovimientos(movimientoExistente.getCuenta(), movimientos);
         movimientoRepository.saveAll(movimientos);
@@ -98,7 +98,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         }
 
         List<Movimiento> movimientos = new ArrayList<>(movimientoRepository
-                .findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(movimientoExistente.getCuenta().getCuentaId()));
+                .findMovimientosDeCuenta(movimientoExistente.getCuenta().getCuentaId()));
 
         recalcularYValidarMovimientos(movimientoExistente.getCuenta(), movimientos);
         movimientoRepository.saveAll(movimientos);
@@ -112,7 +112,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         Cuenta cuenta = movimiento.getCuenta();
 
         List<Movimiento> movimientos = new ArrayList<>(movimientoRepository
-                .findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(cuenta.getCuentaId()));
+                .findMovimientosDeCuenta(cuenta.getCuentaId()));
         movimientos.removeIf(item -> item.getMovimientoId().equals(movimientoId));
 
         recalcularYValidarMovimientos(cuenta, movimientos);
