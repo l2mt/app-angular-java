@@ -1,6 +1,7 @@
 package com.lmora.cuentas.shared.exception;
 
 import com.lmora.cuentas.clientes.exception.ClienteIdentificacionDuplicadaException;
+import com.lmora.cuentas.cuentas.exception.CuentaNumeroDuplicadoException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -26,6 +27,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ClienteIdentificacionDuplicadaException.class)
     public ResponseEntity<ApiError> handleClienteIdentificacionDuplicada(
             ClienteIdentificacionDuplicadaException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
+    }
+
+    @ExceptionHandler(CuentaNumeroDuplicadoException.class)
+    public ResponseEntity<ApiError> handleCuentaNumeroDuplicado(
+            CuentaNumeroDuplicadoException exception,
             HttpServletRequest request
     ) {
         return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
