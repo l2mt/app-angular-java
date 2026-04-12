@@ -3,6 +3,8 @@ package com.lmora.cuentas.clientes.service;
 import com.lmora.cuentas.clientes.exception.ClienteIdentificacionDuplicadaException;
 import com.lmora.cuentas.clientes.model.Cliente;
 import com.lmora.cuentas.clientes.repository.ClienteRepository;
+import com.lmora.cuentas.cuentas.repository.CuentaRepository;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final CuentaRepository cuentaRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -66,6 +69,9 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public void eliminarCliente(Long clienteId) {
         Cliente cliente = buscarClientePorId(clienteId);
+        if (cuentaRepository.existsByClientePersonaId(clienteId)) {
+            throw new BusinessConflictException("No se puede eliminar el cliente porque tiene cuentas asociadas");
+        }
         clienteRepository.delete(cliente);
     }
 

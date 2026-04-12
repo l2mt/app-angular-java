@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,6 +23,7 @@ import com.lmora.cuentas.cuentas.mapper.CuentaMapper;
 import com.lmora.cuentas.cuentas.model.Cuenta;
 import com.lmora.cuentas.cuentas.model.TipoCuenta;
 import com.lmora.cuentas.cuentas.service.CuentaService;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.GlobalExceptionHandler;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.math.BigDecimal;
@@ -185,11 +187,52 @@ class CuentaControllerTest {
     }
 
     @Test
+    void actualizarParcialCuenta_cuandoSaldoInicialNoSePuedeModificar_retorna409() throws Exception {
+        CuentaPatchRequestDto requestDto = new CuentaPatchRequestDto(
+                null,
+                null,
+                null,
+                new BigDecimal("3000.00"),
+                null
+        );
+        Cuenta cuentaPatch = new Cuenta();
+        cuentaPatch.setSaldoInicial(new BigDecimal("3000.00"));
+
+        given(cuentaMapper.toEntity(any(CuentaPatchRequestDto.class))).willReturn(cuentaPatch);
+        given(cuentaService.actualizarParcialCuenta(1L, null, cuentaPatch))
+                .willThrow(new BusinessConflictException(
+                        "No se puede modificar el saldo inicial de una cuenta con movimientos registrados"
+                ));
+
+        mockMvc.perform(patch("/cuentas/1")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message")
+                        .value("No se puede modificar el saldo inicial de una cuenta con movimientos registrados"))
+                .andExpect(jsonPath("$.path").value("/cuentas/1"));
+    }
+
+    @Test
     void eliminarCuenta_cuandoExiste_retorna204() throws Exception {
         doNothing().when(cuentaService).eliminarCuenta(1L);
 
         mockMvc.perform(delete("/cuentas/1"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void eliminarCuenta_cuandoTieneMovimientos_retorna409() throws Exception {
+        willThrow(new BusinessConflictException("No se puede eliminar la cuenta porque tiene movimientos asociados"))
+                .given(cuentaService)
+                .eliminarCuenta(1L);
+
+        mockMvc.perform(delete("/cuentas/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("No se puede eliminar la cuenta porque tiene movimientos asociados"))
+                .andExpect(jsonPath("$.path").value("/cuentas/1"));
     }
 
     private CuentaRequestDto crearCuentaRequestDto() {

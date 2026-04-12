@@ -43,6 +43,14 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
     }
 
+    @ExceptionHandler(BusinessConflictException.class)
+    public ResponseEntity<ApiError> handleBusinessConflict(
+            BusinessConflictException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
+    }
+
     @ExceptionHandler(SaldoNoDisponibleException.class)
     public ResponseEntity<ApiError> handleSaldoNoDisponible(
             SaldoNoDisponibleException exception,
