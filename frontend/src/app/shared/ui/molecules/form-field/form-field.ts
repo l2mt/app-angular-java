@@ -30,6 +30,7 @@ type FieldType = 'text' | 'number' | 'password' | 'email' | 'tel' | 'search';
         [attr.autocomplete]="autocomplete()"
         [attr.min]="min()"
         [attr.max]="max()"
+        [attr.step]="step()"
       />
       @if (errorMessage(); as m) {
         <small class="error" role="alert">{{ m }}</small>
@@ -77,6 +78,7 @@ export class FormField {
   readonly autocomplete = input<string | null>(null);
   readonly min = input<number | null>(null);
   readonly max = input<number | null>(null);
+  readonly step = input<number | string | null>(null);
 
   protected readonly fieldId = computed(() => `ff-${this.controlName()}`);
 

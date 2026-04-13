@@ -26,5 +26,29 @@ export const routes: Routes = [
       ),
     title: 'Editar cliente',
   },
+  {
+    path: 'cuentas',
+    loadComponent: () =>
+      import('./features/cuentas/components/cuentas-list/cuentas-list').then(
+        (m) => m.CuentasList,
+      ),
+    title: 'Cuentas',
+  },
+  {
+    path: 'cuentas/nuevo',
+    loadComponent: () =>
+      import('./features/cuentas/components/cuenta-form/cuenta-form').then(
+        (m) => m.CuentaForm,
+      ),
+    title: 'Nueva cuenta',
+  },
+  {
+    path: 'cuentas/:id/editar',
+    loadComponent: () =>
+      import('./features/cuentas/components/cuenta-form/cuenta-form').then(
+        (m) => m.CuentaForm,
+      ),
+    title: 'Editar cuenta',
+  },
   { path: '**', redirectTo: 'clientes' },
 ];
