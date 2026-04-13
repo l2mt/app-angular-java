@@ -50,5 +50,29 @@ export const routes: Routes = [
       ),
     title: 'Editar cuenta',
   },
+  {
+    path: 'movimientos',
+    loadComponent: () =>
+      import('./features/movimientos/components/movimientos-list/movimientos-list').then(
+        (m) => m.MovimientosList,
+      ),
+    title: 'Movimientos',
+  },
+  {
+    path: 'movimientos/nuevo',
+    loadComponent: () =>
+      import('./features/movimientos/components/movimiento-form/movimiento-form').then(
+        (m) => m.MovimientoForm,
+      ),
+    title: 'Nuevo movimiento',
+  },
+  {
+    path: 'movimientos/:id/editar',
+    loadComponent: () =>
+      import('./features/movimientos/components/movimiento-form/movimiento-form').then(
+        (m) => m.MovimientoForm,
+      ),
+    title: 'Editar movimiento',
+  },
   { path: '**', redirectTo: 'clientes' },
 ];

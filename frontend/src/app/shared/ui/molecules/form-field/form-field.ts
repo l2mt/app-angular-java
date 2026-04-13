@@ -3,7 +3,15 @@ import { ControlContainer, ReactiveFormsModule } from '@angular/forms';
 
 import { getErrorMessage } from '../../../forms/form-errors.util';
 
-type FieldType = 'text' | 'number' | 'password' | 'email' | 'tel' | 'search';
+type FieldType =
+  | 'text'
+  | 'number'
+  | 'password'
+  | 'email'
+  | 'tel'
+  | 'search'
+  | 'date'
+  | 'datetime-local';
 
 @Component({
   selector: 'app-form-field',
