@@ -2,6 +2,9 @@ package com.lmora.cuentas.shared.exception;
 
 import com.lmora.cuentas.clientes.exception.ClienteIdentificacionDuplicadaException;
 import com.lmora.cuentas.cuentas.exception.CuentaNumeroDuplicadoException;
+import com.lmora.cuentas.movimientos.exception.CupoDiarioExcedidoException;
+import com.lmora.cuentas.movimientos.exception.MovimientoInvalidoException;
+import com.lmora.cuentas.movimientos.exception.SaldoNoDisponibleException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -38,6 +41,30 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
+    }
+
+    @ExceptionHandler(SaldoNoDisponibleException.class)
+    public ResponseEntity<ApiError> handleSaldoNoDisponible(
+            SaldoNoDisponibleException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
+    }
+
+    @ExceptionHandler(CupoDiarioExcedidoException.class)
+    public ResponseEntity<ApiError> handleCupoDiarioExcedido(
+            CupoDiarioExcedidoException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request.getRequestURI(), null);
+    }
+
+    @ExceptionHandler(MovimientoInvalidoException.class)
+    public ResponseEntity<ApiError> handleMovimientoInvalido(
+            MovimientoInvalidoException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
