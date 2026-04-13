@@ -53,13 +53,11 @@ public abstract class Persona {
     @Column(name = "identificacion", nullable = false, unique = true, length = 20)
     private String identificacion;
 
-    @NotBlank
     @Size(max = 200)
-    @Column(name = "direccion", nullable = false, length = 200)
+    @Column(name = "direccion", length = 200)
     private String direccion;
 
-    @NotBlank
     @Size(max = 20)
-    @Column(name = "telefono", nullable = false, length = 20)
+    @Column(name = "telefono", length = 20)
     private String telefono;
 }

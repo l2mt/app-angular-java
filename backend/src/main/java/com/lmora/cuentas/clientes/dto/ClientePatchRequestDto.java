@@ -21,11 +21,9 @@ public record ClientePatchRequestDto(
         @Size(max = 20)
         String identificacion,
 
-        @Pattern(regexp = ".*\\S.*", message = "direccion no debe estar vacia")
         @Size(max = 200)
         String direccion,
 
-        @Pattern(regexp = ".*\\S.*", message = "telefono no debe estar vacio")
         @Size(max = 20)
         String telefono,
 
