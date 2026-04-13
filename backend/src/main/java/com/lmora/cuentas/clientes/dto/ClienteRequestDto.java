@@ -24,11 +24,9 @@ public record ClienteRequestDto(
         @Size(max = 20)
         String identificacion,
 
-        @NotBlank
         @Size(max = 200)
         String direccion,
 
-        @NotBlank
         @Size(max = 20)
         String telefono,
 
