@@ -13,6 +13,8 @@ import com.lmora.cuentas.cuentas.exception.CuentaNumeroDuplicadoException;
 import com.lmora.cuentas.cuentas.model.Cuenta;
 import com.lmora.cuentas.cuentas.model.TipoCuenta;
 import com.lmora.cuentas.cuentas.repository.CuentaRepository;
+import com.lmora.cuentas.movimientos.repository.MovimientoRepository;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -30,6 +32,9 @@ class CuentaServiceImplTest {
 
     @Mock
     private ClienteRepository clienteRepository;
+
+    @Mock
+    private MovimientoRepository movimientoRepository;
 
     @InjectMocks
     private CuentaServiceImpl cuentaService;
@@ -103,6 +108,7 @@ class CuentaServiceImplTest {
         patch.setEstado(false);
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(false);
         when(cuentaRepository.save(any(Cuenta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Cuenta cuentaActualizada = cuentaService.actualizarParcialCuenta(1L, null, patch);
@@ -112,8 +118,50 @@ class CuentaServiceImplTest {
         assertEquals(TipoCuenta.CORRIENTE, cuentaActualizada.getTipoCuenta());
         assertEquals(new BigDecimal("3000.00"), cuentaActualizada.getSaldoInicial());
         assertEquals(false, cuentaActualizada.getEstado());
-        verify(cuentaRepository, never()).existsByNumeroCuentaAndCuentaIdNot(any(), any());
+        verify(cuentaRepository, never()).existsOtraCuentaConNumero(any(), any());
         verify(clienteRepository, never()).findById(any());
+    }
+
+    @Test
+    void actualizarParcialCuenta_cuandoSaldoInicialCambiaYTieneMovimientos_lanzaExcepcion() {
+        Cliente cliente = crearCliente(1L);
+        Cuenta cuentaExistente = crearCuenta();
+        cuentaExistente.setCuentaId(1L);
+        cuentaExistente.setCliente(cliente);
+
+        Cuenta patch = new Cuenta();
+        patch.setSaldoInicial(new BigDecimal("3000.00"));
+
+        when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(true);
+
+        BusinessConflictException exception = assertThrows(
+                BusinessConflictException.class,
+                () -> cuentaService.actualizarParcialCuenta(1L, null, patch)
+        );
+
+        assertEquals(
+                "No se puede modificar el saldo inicial de una cuenta con movimientos registrados",
+                exception.getMessage()
+        );
+        verify(cuentaRepository, never()).save(any());
+    }
+
+    @Test
+    void eliminarCuenta_cuandoTieneMovimientos_lanzaExcepcion() {
+        Cuenta cuentaExistente = crearCuenta();
+        cuentaExistente.setCuentaId(1L);
+
+        when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuentaExistente));
+        when(movimientoRepository.existsMovimientosDeCuenta(1L)).thenReturn(true);
+
+        BusinessConflictException exception = assertThrows(
+                BusinessConflictException.class,
+                () -> cuentaService.eliminarCuenta(1L)
+        );
+
+        assertEquals("No se puede eliminar la cuenta porque tiene movimientos asociados", exception.getMessage());
+        verify(cuentaRepository, never()).delete(any());
     }
 
     private Cuenta crearCuenta() {

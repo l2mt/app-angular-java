@@ -12,6 +12,8 @@ import com.lmora.cuentas.clientes.exception.ClienteIdentificacionDuplicadaExcept
 import com.lmora.cuentas.clientes.model.Cliente;
 import com.lmora.cuentas.clientes.model.Genero;
 import com.lmora.cuentas.clientes.repository.ClienteRepository;
+import com.lmora.cuentas.cuentas.repository.CuentaRepository;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,9 @@ class ClienteServiceImplTest {
 
     @Mock
     private ClienteRepository clienteRepository;
+
+    @Mock
+    private CuentaRepository cuentaRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -90,6 +95,23 @@ class ClienteServiceImplTest {
         assertEquals("0970001111", clienteActualizado.getTelefono());
         assertEquals("hash-anterior", clienteActualizado.getContrasena());
         verify(passwordEncoder, never()).encode(any());
+    }
+
+    @Test
+    void eliminarCliente_cuandoTieneCuentasAsociadas_lanzaExcepcion() {
+        Cliente cliente = crearCliente();
+        cliente.setPersonaId(1L);
+
+        when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
+        when(cuentaRepository.existsCuentasDeCliente(1L)).thenReturn(true);
+
+        BusinessConflictException exception = assertThrows(
+                BusinessConflictException.class,
+                () -> clienteService.eliminarCliente(1L)
+        );
+
+        assertEquals("No se puede eliminar el cliente porque tiene cuentas asociadas", exception.getMessage());
+        verify(clienteRepository, never()).delete(any());
     }
 
     private Cliente crearCliente() {

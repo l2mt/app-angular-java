@@ -5,7 +5,10 @@ import com.lmora.cuentas.clientes.repository.ClienteRepository;
 import com.lmora.cuentas.cuentas.exception.CuentaNumeroDuplicadoException;
 import com.lmora.cuentas.cuentas.model.Cuenta;
 import com.lmora.cuentas.cuentas.repository.CuentaRepository;
+import com.lmora.cuentas.movimientos.repository.MovimientoRepository;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ public class CuentaServiceImpl implements CuentaService {
 
     private final CuentaRepository cuentaRepository;
     private final ClienteRepository clienteRepository;
+    private final MovimientoRepository movimientoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -43,6 +47,7 @@ public class CuentaServiceImpl implements CuentaService {
     public Cuenta actualizarCuenta(Long cuentaId, Long clienteId, Cuenta cuenta) {
         Cuenta cuentaExistente = buscarCuentaPorId(cuentaId);
         validarNumeroCuentaDisponibleParaActualizacion(cuenta.getNumeroCuenta(), cuentaId);
+        validarCambioSaldoInicial(cuentaExistente, cuenta.getSaldoInicial());
 
         cuentaExistente.setCliente(buscarClientePorId(clienteId));
         actualizarDatosCompletos(cuentaExistente, cuenta);
@@ -64,6 +69,7 @@ public class CuentaServiceImpl implements CuentaService {
             cuentaExistente.setCliente(buscarClientePorId(clienteId));
         }
 
+        validarCambioSaldoInicial(cuentaExistente, cuenta.getSaldoInicial());
         actualizarDatosParciales(cuentaExistente, cuenta);
 
         return cuentaRepository.save(cuentaExistente);
@@ -73,6 +79,9 @@ public class CuentaServiceImpl implements CuentaService {
     @Transactional
     public void eliminarCuenta(Long cuentaId) {
         Cuenta cuenta = buscarCuentaPorId(cuentaId);
+        if (movimientoRepository.existsMovimientosDeCuenta(cuentaId)) {
+            throw new BusinessConflictException("No se puede eliminar la cuenta porque tiene movimientos asociados");
+        }
         cuentaRepository.delete(cuenta);
     }
 
@@ -93,8 +102,21 @@ public class CuentaServiceImpl implements CuentaService {
     }
 
     private void validarNumeroCuentaDisponibleParaActualizacion(String numeroCuenta, Long cuentaId) {
-        if (cuentaRepository.existsByNumeroCuentaAndCuentaIdNot(numeroCuenta, cuentaId)) {
+        if (cuentaRepository.existsOtraCuentaConNumero(numeroCuenta, cuentaId)) {
             throw new CuentaNumeroDuplicadoException(numeroCuenta);
+        }
+    }
+
+    private void validarCambioSaldoInicial(Cuenta cuentaExistente, BigDecimal nuevoSaldoInicial) {
+        if (nuevoSaldoInicial == null) {
+            return;
+        }
+
+        if (cuentaExistente.getSaldoInicial().compareTo(nuevoSaldoInicial) != 0
+                && movimientoRepository.existsMovimientosDeCuenta(cuentaExistente.getCuentaId())) {
+            throw new BusinessConflictException(
+                    "No se puede modificar el saldo inicial de una cuenta con movimientos registrados"
+            );
         }
     }
 

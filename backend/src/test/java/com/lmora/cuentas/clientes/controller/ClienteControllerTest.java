@@ -22,6 +22,7 @@ import com.lmora.cuentas.clientes.mapper.ClienteMapper;
 import com.lmora.cuentas.clientes.model.Cliente;
 import com.lmora.cuentas.clientes.model.Genero;
 import com.lmora.cuentas.clientes.service.ClienteService;
+import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.GlobalExceptionHandler;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.util.List;
@@ -193,6 +194,19 @@ class ClienteControllerTest {
 
         mockMvc.perform(delete("/clientes/1"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void eliminarCliente_cuandoTieneCuentasAsociadas_retorna409() throws Exception {
+        willThrow(new BusinessConflictException("No se puede eliminar el cliente porque tiene cuentas asociadas"))
+                .given(clienteService)
+                .eliminarCliente(1L);
+
+        mockMvc.perform(delete("/clientes/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("No se puede eliminar el cliente porque tiene cuentas asociadas"))
+                .andExpect(jsonPath("$.path").value("/clientes/1"));
     }
 
     private ClienteRequestDto crearClienteRequestDto() {

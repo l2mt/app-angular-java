@@ -45,7 +45,7 @@ class MovimientoServiceImplTest {
         Movimiento movimiento = crearMovimiento(cuenta, null, TipoMovimiento.CREDITO, new BigDecimal("100.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of());
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of());
         when(movimientoRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Movimiento movimientoGuardado = movimientoService.crearMovimiento(1L, movimiento);
@@ -60,7 +60,7 @@ class MovimientoServiceImplTest {
         Movimiento movimiento = crearMovimiento(cuenta, null, TipoMovimiento.DEBITO, new BigDecimal("-100.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of());
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of());
         when(movimientoRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Movimiento movimientoGuardado = movimientoService.crearMovimiento(1L, movimiento);
@@ -74,7 +74,7 @@ class MovimientoServiceImplTest {
         Movimiento movimiento = crearMovimiento(cuenta, null, TipoMovimiento.CREDITO, new BigDecimal("-100.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of());
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of());
 
         assertThrows(MovimientoInvalidoException.class, () -> movimientoService.crearMovimiento(1L, movimiento));
 
@@ -87,7 +87,7 @@ class MovimientoServiceImplTest {
         Movimiento movimiento = crearMovimiento(cuenta, null, TipoMovimiento.DEBITO, new BigDecimal("-600.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of());
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of());
 
         assertThrows(SaldoNoDisponibleException.class, () -> movimientoService.crearMovimiento(1L, movimiento));
 
@@ -101,7 +101,7 @@ class MovimientoServiceImplTest {
         Movimiento nuevo = crearMovimiento(cuenta, null, TipoMovimiento.DEBITO, new BigDecimal("-500.00"));
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of(existente));
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of(existente));
 
         assertThrows(CupoDiarioExcedidoException.class, () -> movimientoService.crearMovimiento(1L, nuevo));
 
@@ -117,7 +117,7 @@ class MovimientoServiceImplTest {
         segundo.setSaldo(new BigDecimal("2050.00"));
 
         when(movimientoRepository.findById(1L)).thenReturn(Optional.of(primero));
-        when(movimientoRepository.findByCuentaCuentaIdOrderByFechaAscMovimientoIdAsc(1L)).thenReturn(List.of(primero, segundo));
+        when(movimientoRepository.findMovimientosDeCuenta(1L)).thenReturn(List.of(primero, segundo));
         when(movimientoRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         movimientoService.eliminarMovimiento(1L);
