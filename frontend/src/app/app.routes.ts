@@ -74,5 +74,13 @@ export const routes: Routes = [
       ),
     title: 'Editar movimiento',
   },
+  {
+    path: 'reportes',
+    loadComponent: () =>
+      import('./features/reportes/components/reportes-page/reportes-page').then(
+        (m) => m.ReportesPage,
+      ),
+    title: 'Reportes',
+  },
   { path: '**', redirectTo: 'clientes' },
 ];

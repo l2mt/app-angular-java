@@ -2,6 +2,7 @@ package com.lmora.cuentas.reportes.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +25,9 @@ import java.time.LocalTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,6 +121,7 @@ class ReporteServiceImplTest {
 
         byte[] pdf = Base64.getDecoder().decode(reporte.pdfBase64());
         assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
+        assertPdfContainsFormattedAmounts(pdf);
     }
 
     @Test
@@ -175,5 +180,20 @@ class ReporteServiceImplTest {
         movimiento.setValor(valor);
         movimiento.setSaldo(saldo);
         return movimiento;
+    }
+
+    private void assertPdfContainsFormattedAmounts(byte[] pdfBytes) {
+        try (PDDocument document = Loader.loadPDF(pdfBytes)) {
+            PDFTextStripper textStripper = new PDFTextStripper();
+            String text = textStripper.getText(document);
+
+            assertTrue(text.contains("Estado de cuenta"));
+            assertTrue(text.contains("$1,050.00"));
+            assertTrue(text.contains("$600.00"));
+            assertTrue(text.contains("$50.00"));
+            assertTrue(text.contains("-$50.00"));
+        } catch (Exception exception) {
+            throw new AssertionError("No se pudo leer el PDF generado en la prueba", exception);
+        }
     }
 }

@@ -65,6 +65,7 @@ const TIPOS: TipoMovimiento[] = ['CREDITO', 'DEBITO'];
           label="Valor"
           controlName="valor"
           type="number"
+          [min]="0.01"
           step="0.01"
         />
 
@@ -107,7 +108,7 @@ export class MovimientoForm {
       validators: [Validators.required],
     }),
     valor: this.fb.nonNullable.control<number | null>(null, {
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.min(0.01)],
     }),
     fecha: this.fb.nonNullable.control<string>(''),
   });
@@ -171,7 +172,7 @@ export class MovimientoForm {
     this.form.patchValue({
       cuentaId: m.cuentaId,
       tipoMovimiento: m.tipoMovimiento,
-      valor: m.valor,
+      valor: Math.abs(m.valor),
       fecha: m.fecha ? m.fecha.slice(0, 16) : '',
     });
   }
@@ -181,7 +182,7 @@ export class MovimientoForm {
     return {
       cuentaId: v.cuentaId as number,
       tipoMovimiento: v.tipoMovimiento as TipoMovimiento,
-      valor: v.valor as number,
+      valor: this.toSignedValue(v.valor as number, v.tipoMovimiento as TipoMovimiento),
       fecha: v.fecha ? v.fecha : null,
     };
   }
@@ -191,9 +192,14 @@ export class MovimientoForm {
     return {
       cuentaId: v.cuentaId as number,
       tipoMovimiento: v.tipoMovimiento as TipoMovimiento,
-      valor: v.valor as number,
+      valor: this.toSignedValue(v.valor as number, v.tipoMovimiento as TipoMovimiento),
       fecha: v.fecha ? v.fecha : null,
     };
+  }
+
+  private toSignedValue(valor: number, tipoMovimiento: TipoMovimiento): number {
+    const absoluteValue = Math.abs(valor);
+    return tipoMovimiento === 'DEBITO' ? -absoluteValue : absoluteValue;
   }
 
   private handleError(err: unknown): void {
