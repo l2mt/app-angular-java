@@ -1,0 +1,360 @@
+{
+  "info": {
+    "_postman_id": "30452bd8-5baa-4734-8d5f-ae4a68be78be",
+    "name": "angular-java-app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41315555"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4800/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Clientes - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Jose Lema\",\n  \"genero\": \"MASCULINO\",\n  \"edad\": 30,\n  \"identificacion\": \"1234567890\",\n  \"direccion\": \"Otavalo sn y principal\",\n  \"telefono\": \"0987654321\",\n  \"contrasena\": \"1234\",\n  \"estado\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/clientes"
+      },
+      "response": []
+    },
+    {
+      "name": "Clientes - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/clientes"
+      },
+      "response": []
+    },
+    {
+      "name": "Clientes - Obtener por Id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/clientes/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Clientes - Actualización",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Jose Lema Actualizado\",\n  \"genero\": \"MASCULINO\",\n  \"edad\": 31,\n  \"identificacion\": \"1234567890\",\n  \"direccion\": \"Av. Amazonas 123\",\n  \"telefono\": \"0999999999\",\n  \"contrasena\": \"5678\",\n  \"estado\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/clientes/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Clientes - Actualización parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telefono\": \"0970001111\",\n  \"direccion\": \"Quito Norte\",\n  \"estado\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/clientes/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Clientes - Borrar",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/clientes/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"clienteId\": 1,\n  \"numeroCuenta\": \"478758\",\n  \"tipoCuenta\": \"AHORROS\",\n  \"saldoInicial\": 2000.00,\n  \"estado\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/cuentas"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/cuentas"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Obtener por Id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/cuentas/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Actualización",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"clienteId\": 1,\n  \"numeroCuenta\": \"478758\",\n  \"tipoCuenta\": \"CORRIENTE\",\n  \"saldoInicial\": 2500.00,\n  \"estado\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/cuentas/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Actualización parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipoCuenta\": \"AHORROS\",\n  \"saldoInicial\": 3000.00,\n  \"estado\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/cuentas/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Actualizar cliente",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"clienteId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/cuentas/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Cuentas - Borrar",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/cuentas/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Crear crédito",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cuentaId\": 1,\n  \"fecha\": \"2026-04-12T10:00:00\",\n  \"tipoMovimiento\": \"CREDITO\",\n  \"valor\": 100.00\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/movimientos"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Crear débito",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cuentaId\": 1,\n  \"fecha\": \"2026-04-12T11:00:00\",\n  \"tipoMovimiento\": \"DEBITO\",\n  \"valor\": -50.00\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/movimientos"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/movimientos"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Obtener por Id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/movimientos/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Actualización parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipoMovimiento\": \"CREDITO\",\n  \"valor\": 200.00\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/movimientos/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Actualizar por Id",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cuentaId\": 1,\n  \"fecha\": \"2026-04-12T11:00:00\",\n  \"tipoMovimiento\": \"DEBITO\",\n  \"valor\": -80.00\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/movimientos/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Movimientos - Borrar",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/movimientos/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Reportes - Estado de cuenta",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/reportes?clienteId=1&fechaDesde=2026-04-01&fechaHasta=2026-04-30"
+      },
+      "response": []
+    }
+  ]
+}

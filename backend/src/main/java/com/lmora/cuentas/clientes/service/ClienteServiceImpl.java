@@ -8,7 +8,6 @@ import com.lmora.cuentas.shared.exception.BusinessConflictException;
 import com.lmora.cuentas.shared.exception.ResourceNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final CuentaRepository cuentaRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,7 +34,6 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public Cliente crearCliente(Cliente cliente) {
         validarIdentificacionDisponible(cliente.getIdentificacion());
-        cliente.setContrasena(passwordEncoder.encode(cliente.getContrasena()));
         return clienteRepository.save(cliente);
     }
 
@@ -99,7 +96,7 @@ public class ClienteServiceImpl implements ClienteService {
         clienteExistente.setIdentificacion(cliente.getIdentificacion());
         clienteExistente.setDireccion(cliente.getDireccion());
         clienteExistente.setTelefono(cliente.getTelefono());
-        clienteExistente.setContrasena(passwordEncoder.encode(cliente.getContrasena()));
+        clienteExistente.setContrasena(cliente.getContrasena());
         clienteExistente.setEstado(cliente.getEstado());
     }
 
@@ -129,7 +126,7 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
         if (cliente.getContrasena() != null) {
-            clienteExistente.setContrasena(passwordEncoder.encode(cliente.getContrasena()));
+            clienteExistente.setContrasena(cliente.getContrasena());
         }
 
         if (cliente.getEstado() != null) {

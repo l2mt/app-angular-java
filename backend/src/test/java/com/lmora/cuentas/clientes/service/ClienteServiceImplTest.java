@@ -1,7 +1,6 @@
 package com.lmora.cuentas.clientes.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class ClienteServiceImplTest {
@@ -31,9 +29,6 @@ class ClienteServiceImplTest {
 
     @Mock
     private CuentaRepository cuentaRepository;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private ClienteServiceImpl clienteService;
@@ -47,22 +42,18 @@ class ClienteServiceImplTest {
         assertThrows(ClienteIdentificacionDuplicadaException.class, () -> clienteService.crearCliente(cliente));
 
         verify(clienteRepository, never()).save(any());
-        verify(passwordEncoder, never()).encode(any());
     }
 
     @Test
-    void crearCliente_cuandoIdentificacionEsNueva_guardaConContrasenaCodificada() {
+    void crearCliente_cuandoIdentificacionEsNueva_guardaConContrasenaEnTextoPlano() {
         Cliente cliente = crearCliente();
 
         when(clienteRepository.existsByIdentificacion("1234567890")).thenReturn(false);
-        when(passwordEncoder.encode("1234")).thenReturn("hash-1234");
         when(clienteRepository.save(any(Cliente.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Cliente clienteGuardado = clienteService.crearCliente(cliente);
 
-        assertEquals("hash-1234", clienteGuardado.getContrasena());
-        assertNotEquals("1234", clienteGuardado.getContrasena());
-        verify(passwordEncoder).encode("1234");
+        assertEquals("1234", clienteGuardado.getContrasena());
         verify(clienteRepository).save(cliente);
     }
 
@@ -94,7 +85,6 @@ class ClienteServiceImplTest {
 
         assertEquals("0970001111", clienteActualizado.getTelefono());
         assertEquals("hash-anterior", clienteActualizado.getContrasena());
-        verify(passwordEncoder, never()).encode(any());
     }
 
     @Test
